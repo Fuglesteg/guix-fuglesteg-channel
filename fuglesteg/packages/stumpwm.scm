@@ -7,7 +7,7 @@
   #:use-module ((guix licenses) #:prefix license:))
 
 (define-public sbcl-stumpwm-stump-regkey
-  (let ((commit "376b82f59a34dc071c9224de116b1b9eac21d91e")
+  (let ((commit "2e6dd1dff820447ab62c0cced78de254c72ca9fb")
         (revision "0"))
   (package 
    (name "sbcl-stumpwm-stump-regkey")
@@ -20,7 +20,7 @@
            (commit commit)))
      (file-name (git-file-name name version))
      (sha256
-      (base32 "0w8qygpg5c78gr75spf62ckipwyx72vxzzfvhd2p5gsv7k3a20np"))))
+      (base32 "1lh3sgk45cy6ja9z9s04rfcpv183p9d66dsy4x14pqm40dqkzbij"))))
    (build-system asdf-build-system/sbcl)
    (arguments
     '(#:asd-systems '("stump-regkey")))
