@@ -16,12 +16,14 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system trivial)
   #:use-module (guix build-system copy)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system python)
   #:use-module (guix build-system pyproject)
   #:use-module (guix build-system vim)
   #:use-module (gnu packages)
+  #:use-module (gnu packages commencement)
   #:use-module (gnu packages acl)
   #:use-module (gnu packages admin) ; For GNU hostname
   #:use-module (gnu packages attr)
@@ -208,5 +210,37 @@ refactor Vim in order to:
     ;; except for parts that were contributed under the Vim license.
     (license (list license:asl2.0 license:vim))))
 
-
-
+(define-public nvim-telescope-fzf-native
+  (let ((commit "2a5ceff981501cff8f46871d5402cd3378a8ab6a")
+        (revision "0"))
+  (package
+   (name "nvim-telescope-fzf-native")
+   (version (git-version "0.0.0" revision commit))
+   (source (origin
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/nvim-telescope/telescope-fzf-native.nvim")
+                  (commit commit)))
+            (file-name (git-file-name name version))
+            (sha256
+             (base32
+              "0n5yaslwmjn2057njyn604wb60zhqgad439zxaafd7qmvyjazlfi"))))
+   (build-system gnu-build-system)
+   (arguments
+    (list
+     #:phases
+     #~(modify-phases %standard-phases
+                      (delete 'configure)
+                      (delete 'install-locale)
+                      (delete 'check)
+                      (replace 'build
+                               (lambda _
+                                 (invoke "make" "CC=gcc")))
+                      (replace 'install
+                               (lambda _
+                                 (mkdir-p "share/lib")
+                                 (install-file "build/libfzf.so" (string-append #$output "/share/lib")))))))
+   (synopsis "")
+   (description "")
+   (home-page "")
+   (license license:expat))))
