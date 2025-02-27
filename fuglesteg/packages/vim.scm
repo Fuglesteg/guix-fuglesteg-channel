@@ -113,7 +113,7 @@ This package includes the @code{libtree-sitter} runtime library.")
 (define-public neovim
   (package
     (name "neovim")
-    (version "0.10.2")
+    (version "0.10.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -122,7 +122,7 @@ This package includes the @code{libtree-sitter} runtime library.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0r5mjfsgrllxi44i9k6lb8b99rpzrwhkg18aiqmby8wwzflbqdy3"))))
+                "007v6aq4kdwcshlp8csnp12cx8c0yq8yh373i916ddqnjdajn3z3"))))
     (build-system cmake-build-system)
     (arguments
      (list #:modules
