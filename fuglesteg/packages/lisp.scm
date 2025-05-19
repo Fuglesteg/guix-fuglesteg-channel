@@ -2,6 +2,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system asdf)
+  #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages lisp)
   #:use-module (gnu packages libevent)
@@ -131,25 +132,40 @@
 (define-public sbcl-deploy-latest
   (let ((commit "13df110e31a50651c9d9040f34f58e85f3144d6a")
         (revision "1"))
-  (package
-   (inherit sbcl-deploy)
-   (name "sbcl-deploy")
-   (version (git-version "1.1" revision commit))
-   (source
-    (origin
-     (method git-fetch)
-     (uri (git-reference
-           (url "https://github.com/Shinmera/deploy")
-           (commit commit)))
-     (file-name (git-file-name name version))
-     (sha256
-      (base32 "0xbnrkfx4gshvn7fa726017m3zrfyrblc9ij10xvcdk5h86j66zj"))))
-   (native-inputs
-    (list sbcl-cl-mpg123
-          sbcl-cl-out123))
-   (inputs
-    (list sbcl-cffi
-          sbcl-documentation-utils
-          sbcl-trivial-features
-          sbcl-pathname-utils
-          sbcl-sha3)))))
+    (package
+     (name "sbcl-deploy")
+     (version (git-version "1.1" revision commit))
+     (source
+      (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/Shinmera/deploy")
+             (commit commit)))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0xbnrkfx4gshvn7fa726017m3zrfyrblc9ij10xvcdk5h86j66zj"))))
+     (build-system asdf-build-system/sbcl)
+     (arguments
+      (list
+       #:phases #~(modify-phases %standard-phases
+                                 (add-after 'unpack 'override-sbcl-run-script
+                                            (lambda _
+                                              (substitute* "shrinkwrap.lisp"
+                                                           (("(sbcl-path \"run-sbcl.sh\")") (string-append #$sbcl "/bin/sbcl"))))))))
+     (native-inputs
+      (list sbcl-cl-mpg123
+            sbcl-cl-out123))
+     (inputs
+      (list sbcl-cffi
+            sbcl
+            sbcl-documentation-utils
+            sbcl-trivial-features
+            sbcl-pathname-utils
+            sbcl-sha3))
+     (home-page "https://shinmera.github.io/deploy/")
+     (synopsis "Deployment tools for standalone Common Lisp application")
+     (description
+      "This is a system to help you easily and quickly deploy standalone
+common lisp applications as binaries.  Specifically it is geared towards
+applications with foreign library dependencies that run some kind of GUI.")
+     (license license:artistic2.0))))
