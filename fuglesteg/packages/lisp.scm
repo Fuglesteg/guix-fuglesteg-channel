@@ -151,7 +151,7 @@
                                  (add-after 'unpack 'override-sbcl-run-script
                                             (lambda _
                                               (substitute* "shrinkwrap.lisp"
-                                                           (("(sbcl-path \"run-sbcl.sh\")") (string-append "\"" #$sbcl "/bin/sbcl" "\""))))))))
+                                                           (("\\(sbcl-path \"run-sbcl.sh\"\\)") (string-append "\"" #$sbcl "/bin/sbcl" "\""))))))))
      (native-inputs
       (list sbcl-cl-mpg123
             sbcl-cl-out123))
