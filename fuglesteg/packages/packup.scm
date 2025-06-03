@@ -10,14 +10,14 @@
 (define-public packup
   (package
    (name "packup")
-   (version "1.1")
+   (version "1.2")
    (source
     (origin
      (method git-fetch)
      (uri (git-reference
            (url "https://github.com/Fuglesteg/packup")
-           (commit "87cde1320b74b527c6f7d975ad870731f24a8d62")))
-     (sha256 (base32 "02mdikjcl5vz7hpk0gh9v0l8glary2wmibw1k5aq2mjhz7l66n87"))
+           (commit "58c687a360e54cc82dfe9d5bac9ced8504f10928")))
+     (sha256 (base32 "1d2gc4rhsbmq32d7hrrkdfdl15n4zib046rcxmk9sbgvyixb1c6g"))
      (file-name (git-file-name name version))))
    (build-system copy-build-system)
    (arguments
