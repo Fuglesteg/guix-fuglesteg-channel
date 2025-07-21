@@ -2,7 +2,9 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix gexp)
+  #:use-module (srfi srfi-1)
   #:use-module (gnu packages crates-io)
+  #:use-module (gnu packages julia)
   #:use-module (gnu packages crates-web)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages icu4c)
@@ -65,16 +67,16 @@
 (define-public tree-sitter
   (package
     (name "tree-sitter")
-    (version "0.24.3")                 ;untagged
+    (version "0.25.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/tree-sitter/tree-sitter")
-                    (commit "v0.24.3")))
+                    (commit (string-append "v" version))))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1pn1k2ch14y48718l7s21rz5alqgdw1bis25r9x4rm6zac7kiy6q"))
+                "0cck2wa17figxww7lb508sgwy9sbyqj89vxci07hiscr5sgdx9y5"))
               (modules '((guix build utils)))
               (snippet #~(begin
                            ;; Remove bundled ICU parts
@@ -109,11 +111,103 @@ can be embedded in any application
 This package includes the @code{libtree-sitter} runtime library.")
     (license license:expat)))
 
+(define-public utf8proc-bootstrap
+  (hidden-package
+    (package
+      (name "utf8proc-bootstrap")
+      (version "2.10.0")
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/JuliaStrings/utf8proc")
+               (commit (string-append "v" version))))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1n1k67x39sk8xnza4w1xkbgbvgb1g7w2a7j2qrqzqaw1lyilqsy2"))))
+      (build-system gnu-build-system)
+      (arguments
+       `(#:tests? #f
+         #:make-flags (list ,(string-append "CC=" (cc-for-target))
+                            (string-append "prefix=" (assoc-ref %outputs "out")))
+         #:phases
+         (modify-phases %standard-phases
+           (delete 'configure))))
+      (home-page "https://juliastrings.github.io/utf8proc/")
+      (synopsis "C library for processing UTF-8 Unicode data")
+      (description "utf8proc is a small C library that provides Unicode
+  normalization, case-folding, and other operations for data in the UTF-8
+  encoding, supporting Unicode version 16.0.0.")
+      (license license:expat))))
+
+(define-public utf8proc
+  (package
+    (inherit utf8proc-bootstrap)
+    (name "utf8proc")
+    (version "2.10.0")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/JuliaStrings/utf8proc")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1n1k67x39sk8xnza4w1xkbgbvgb1g7w2a7j2qrqzqaw1lyilqsy2"))))
+    (build-system gnu-build-system)
+    (native-inputs
+     (let ((UNICODE_VERSION "16.0.0"))  ; defined in data/Makefile
+       ;; Test data that is otherwise downloaded with curl.
+       `(("NormalizationTest.txt"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append "https://www.unicode.org/Public/"
+                                 UNICODE_VERSION "/ucd/NormalizationTest.txt"))
+             (sha256
+              (base32 "1cffwlxgn6sawxb627xqaw3shnnfxq0v7cbgsld5w1z7aca9f4fq"))))
+         ("GraphemeBreakTest.txt"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append "https://www.unicode.org/Public/"
+                                 UNICODE_VERSION
+                                 "/ucd/auxiliary/GraphemeBreakTest.txt"))
+             (sha256
+              (base32 "1d9w6vdfxakjpp38qjvhgvbl2qx0zv5655ph54dhdb3hs9a96azf"))))
+         ("DerivedCoreProperties.txt"
+          ,(origin
+             (method url-fetch)
+             (uri (string-append "https://www.unicode.org/Public/";
+                                 UNICODE_VERSION
+                                 "/ucd/DerivedCoreProperties.txt"))
+             (sha256
+               (base32
+                 "1gfsq4vdmzi803i2s8ih7mm4fgs907kvkg88kvv9fi4my9hm3lrr"))))
+         ;; For tests.
+         ("perl" ,perl)
+         ("ruby" ,ruby-2.7)
+         ("julia" ,julia))))
+    (arguments
+      (substitute-keyword-arguments (package-arguments utf8proc-bootstrap)
+                                    #;((#:tests? _ #f)
+                                     (not (%current-target-system)))
+                                    ((#:phases phases)
+                                     `(modify-phases %standard-phases
+                                                     (delete 'configure)
+                                                     (add-before 'check 'check-data
+                                                                 (lambda* (#:key inputs native-inputs #:allow-other-keys)
+                                                                          (display native-inputs)
+                                                                          (for-each (lambda (i)
+                                                                                      (copy-file (assoc-ref (or native-inputs inputs) i)
+                                                                                                 (string-append "data/" i)))
+                                                                                    '("NormalizationTest.txt" "GraphemeBreakTest.txt"
+                                                                                      "DerivedCoreProperties.txt"))))))))
+    (properties (alist-delete 'hidden? (package-properties
+                                         utf8proc-bootstrap)))))
 
 (define-public neovim
   (package
     (name "neovim")
-    (version "0.10.4")
+    (version "0.11.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -122,7 +216,7 @@ This package includes the @code{libtree-sitter} runtime library.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "007v6aq4kdwcshlp8csnp12cx8c0yq8yh373i916ddqnjdajn3z3"))))
+                "1z7xmngjr93dc52k8d3r6x0ivznpa8jbdrw24gqm16lg9gzvma02"))))
     (build-system cmake-build-system)
     (arguments
      (list #:modules
@@ -180,6 +274,7 @@ This package includes the @code{libtree-sitter} runtime library.")
                   libtermkey
                   libvterm
                   unibilium
+                  utf8proc
                   jemalloc
                   (if (member (if (%current-target-system)
                                   (gnu-triplet->nix-system (%current-target-system))
