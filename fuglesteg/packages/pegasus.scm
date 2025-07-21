@@ -46,7 +46,7 @@
                   qtdeclarative-5
                   qtgraphicaleffects
                   qtmultimedia-5
-                  qtgamepad
+                  qtgamepad-5
                   gst-plugins-good ; For video playback
                   bash-minimal)) ; For wrap-program
     (native-inputs (list qttools-5))
