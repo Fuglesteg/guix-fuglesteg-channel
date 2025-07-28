@@ -32,7 +32,7 @@
 
 (define-public lem-latest
   (let ((revision "0")
-        (commit "2f07fbb1e09dc89c89473a9b83d7904b2ba51690"))
+        (commit "70a16b5a3544506f9a86f635a832ea43db0e71e1"))
     (package
      (inherit lem)
      (name "lem")
@@ -44,7 +44,7 @@
              (url "https://github.com/fuglesteg/lem/")
              (commit commit)))
        (sha256
-        (base32 "0xkzi68n5wmy9n0k8v442byphyfg9h7pwcsvl372xvw7g2x3brv3"))
+        (base32 "0dj03pvb1a4sksx0rcxl43mdm0bf2q4ff7r4pfyzfd78n2iyx6y8"))
        (file-name (git-file-name name version))
        (snippet
         #~(begin
