@@ -12,7 +12,7 @@
   #:use-module ((guix licenses) #:prefix license:))
 
 (define-public sbcl-lem-extension-manager
-  (let ((commit "optional-ql-dependency")
+  (let ((commit "cb19321345d6fd13dc3ca59d4d5b9a6b14cc00b1")
         (revision "0"))
   (package
    (name "sbcl-lem-extension-manager")
@@ -21,10 +21,10 @@
     (origin
      (method git-fetch)
      (uri (git-reference
-           (url "https://github.com/fuglesteg/lem-extension-manager")
+           (url "https://github.com/lem-project/lem-extension-manager")
            (commit commit)))
      (sha256
-      (base32 "06jm7vja88jwjxysc9v63sy3qpi1v55s46sm5k0h8nv3mf678r32"))
+      (base32 "1g210cfrbjbdb395wnzb5hax2isq0d5990jhzcxj7kp171dydynf"))
      (file-name (git-file-name name version))))
    (build-system asdf-build-system/sbcl)
    (inputs (list sbcl-alexandria))
@@ -32,7 +32,7 @@
 
 (define-public lem-latest
   (let ((revision "0")
-        (commit "70a16b5a3544506f9a86f635a832ea43db0e71e1"))
+        (commit "abba5c2171a71b19e9fdbfb22378709e3807722c"))
     (package
      (inherit lem)
      (name "lem")
@@ -41,10 +41,10 @@
       (origin
        (method git-fetch)
        (uri (git-reference
-             (url "https://github.com/fuglesteg/lem/")
+             (url "https://github.com/lem-project/lem")
              (commit commit)))
        (sha256
-        (base32 "0dj03pvb1a4sksx0rcxl43mdm0bf2q4ff7r4pfyzfd78n2iyx6y8"))
+        (base32 "02dn7pqjqcb5cs7psgykirp5h4mk8n87xz3j0x7b3kw5x62gax6r"))
        (file-name (git-file-name name version))
        (snippet
         #~(begin
