@@ -33,8 +33,8 @@
                      ;; Used for video playback
                      (lambda _
                        (wrap-program (string-append #$output "/bin/pegasus-fe")
-                         `("GST_PLUGIN_SYSTEM_PATH" suffix
-                           (,(string-append #$gst-plugins-good
+                         `("GST_PLUGIN_PATH" =
+                           (,(string-append #$gst-plugins-base
                                             "/lib/gstreamer-1.0"))))))
                    (add-before 'check 'set-display
                      (lambda _
@@ -48,6 +48,9 @@
                   qtmultimedia-5
                   qtgamepad-5
                   gst-plugins-good ; For video playback
+                  gst-plugins-base
+                  gst-plugins-bad
+                  gstreamer
                   bash-minimal)) ; For wrap-program
     (native-inputs (list qttools-5))
     (synopsis "Customizable graphical emulator frontend")
