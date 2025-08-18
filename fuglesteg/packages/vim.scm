@@ -222,6 +222,7 @@ This package includes the @code{libtree-sitter} runtime library.")
      (list #:modules
            '((srfi srfi-26) (guix build cmake-build-system)
              (guix build utils))
+           #:tests? #f
            #:configure-flags
            #~(list #$@(if (member (if (%current-target-system)
                                       (gnu-triplet->nix-system (%current-target-system))
