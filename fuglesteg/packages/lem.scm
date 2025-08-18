@@ -4,12 +4,112 @@
   #:use-module (guix transformations)
   #:use-module (guix git-download)
   #:use-module (gnu packages wm)
+  #:use-module (gnu packages webkit)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages documentation)
+  #:use-module (gnu packages graphviz)
+  #:use-module (gnu packages lisp-check)
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages lisp-xyz)
   #:use-module (gnu packages text-editors)
   #:use-module (guix git-download)
   #:use-module (guix build-system asdf)
+  #:use-module (guix build-system cmake)
   #:use-module ((guix licenses) #:prefix license:))
+
+(define webview
+  (let ((commit "3ab4b5d722438fc8a13e6ca830c5e2372d19a01d")
+        (revision "0"))
+  (package
+   (name "webview")
+   (version (git-version "0.1" revision commit))
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/webview/webview")
+           (commit commit)))
+     (sha256
+      (base32 "0xfbcwsgjxsqb1whp18crajhqvm5di7dawrn4n6m08lzbmvahsm6"))
+     (file-name (git-file-name name version))))
+   (build-system cmake-build-system)
+   (arguments
+    '(#:tests? #f))
+   (native-inputs (list pkg-config doxygen graphviz))
+   (inputs (list webkitgtk))
+   (description "") (synopsis "") (home-page "") (license license:expat))))
+
+(define sbcl-cl-webview
+  (let ((commit "float-trap-divide-by-zero-masked")
+        (revision "0"))
+  (package
+   (name "cl-webview")
+   (version (git-version "0.1" revision commit))
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/fuglesteg/webview")
+           (commit commit)))
+     (sha256
+      (base32 "1kn5hlgdsbxjk7gkv6gqsc20cfkgc04kzdxpjysnbf9v678r0g3b"))
+     (file-name (git-file-name name version))
+       (snippet
+        #~(begin
+            (use-modules (guix build utils))
+            (delete-file-recursively "c")
+            (delete-file-recursively "lib")
+            (mkdir "lib")
+            (mkdir "lib/linux")
+            (display (string-append #$webview "/lib"))
+            (symlink (string-append #$webview "/lib") "lib/linux/x64")))))
+   (build-system asdf-build-system/sbcl)
+   (arguments
+    '(#:asd-systems (list "webview")))
+   (inputs (list sbcl-cffi sbcl-float-features webview))
+   (description "") (synopsis "") (home-page "") (license license:expat))))
+
+(define sbcl-jsonrpc
+  (let ((commit "2af1e0fad429ee8c706b86c4a853248cdd1be933")
+        (revision "2"))
+    (package
+      (name "sbcl-jsonrpc")
+      (version (git-version "0.3.2" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/cxxxr/jsonrpc")
+               (commit commit)))
+         (file-name (git-file-name "jsonrpc" version))
+         (sha256
+          (base32 "0kd550fsklsc4h0fj8jl6g4z5ldb8ba9dn68s7ykv3myaiwgsy1p"))))
+      (build-system asdf-build-system/sbcl)
+      (arguments
+       '(#:asd-systems (list
+                        "jsonrpc"
+                        "jsonrpc/transport/stdio"
+                        "jsonrpc/transport/websocket"
+                        "jsonrpc/transport/local-domain-socket")))
+      (native-inputs (list sbcl-rove))
+      (inputs (list sbcl-clack
+                    sbcl-http-body
+                    sbcl-lack
+                    sbcl-yason
+                    sbcl-bordeaux-threads
+                    sbcl-event-emitter
+                    sbcl-alexandria
+                    sbcl-dissect
+                    sbcl-trivial-timeout
+                    sbcl-chanl
+                    sbcl-vom
+                    sbcl-usocket
+                    sbcl-websocket-driver))
+      (home-page "https://github.com/cxxxr/jsonrpc")
+      (synopsis "JSON-RPC 2.0 server/client for Common Lisp")
+      (description
+       "This package provides a JSON-RPC 2.0 server/client for Common Lisp.")
+      (license license:bsd-2))))
 
 (define-public sbcl-lem-extension-manager
   (let ((commit "cb19321345d6fd13dc3ca59d4d5b9a6b14cc00b1")
@@ -32,7 +132,7 @@
 
 (define-public lem-latest
   (let ((revision "0")
-        (commit "abba5c2171a71b19e9fdbfb22378709e3807722c"))
+        (commit "8798c0c86e517365c155a0b60208600815511672"))
     (package
      (inherit lem)
      (name "lem")
@@ -44,7 +144,7 @@
              (url "https://github.com/lem-project/lem")
              (commit commit)))
        (sha256
-        (base32 "02dn7pqjqcb5cs7psgykirp5h4mk8n87xz3j0x7b3kw5x62gax6r"))
+        (base32 "0m3q1in2x0c0plsbdja5shy15ww9qsiy4i2fs8mdixy7kx54v5xb"))
        (file-name (git-file-name name version))
        (snippet
         #~(begin
@@ -54,7 +154,7 @@
             (delete-file-recursively "extensions/terminal/lib")))))
      (inputs 
       (list
-       libvterm sbcl-alexandria sbcl-trivia
+       libvterm sbcl-alexandria sbcl-trivia sbcl-cl-webview
        sbcl-trivial-gray-streams sbcl-trivial-types sbcl-cl-ppcre
        sbcl-closer-mop sbcl-iterate sbcl-lem-mailbox
        sbcl-inquisitor sbcl-babel sbcl-bordeaux-threads
@@ -67,4 +167,7 @@
        sbcl-jsonrpc sbcl-usocket sbcl-quri
        sbcl-cl-change-case sbcl-async-process sbcl-cl-iconv
        sbcl-esrap sbcl-parse-number sbcl-cl-package-locks
-       sbcl-slime-swank sbcl-trivial-utf-8 sbcl-lem-extension-manager)))))
+       sbcl-slime-swank sbcl-trivial-utf-8 sbcl-lem-extension-manager
+       sbcl-deploy sbcl-cl-mustache cl-command-line-arguments)))))
+
+  
