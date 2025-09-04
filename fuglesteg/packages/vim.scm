@@ -4,7 +4,6 @@
   #:use-module (guix gexp)
   #:use-module (srfi srfi-1)
   #:use-module (gnu packages julia)
-  #:use-module (gnu packages crates-web)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages node)
@@ -206,7 +205,7 @@ This package includes the @code{libtree-sitter} runtime library.")
 (define-public neovim
   (package
     (name "neovim")
-    (version "0.11.1")
+    (version "0.11.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -215,7 +214,7 @@ This package includes the @code{libtree-sitter} runtime library.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0arypdiycmss5g9wav21hfdc384v1ly82jnsc32zincl2y3f628q"))))
+                "14zy1mk8h72dhz8sn546l5qyl2lzfpj6nspvgskpsdj19f6abn54"))))
     (build-system cmake-build-system)
     (arguments
      (list #:modules
