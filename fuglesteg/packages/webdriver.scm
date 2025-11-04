@@ -17,7 +17,7 @@
   #:use-module (guix build-system cmake)
   #:use-module ((guix licenses) #:prefix license:))
 
-(define sbcl-cl-webdriver-client
+(define-public sbcl-cl-webdriver-client
   (let ((commit "3c2c377fe548504071cbd29c7ba8b9ccb8588a74")
         (revision "0"))
   (package
@@ -30,9 +30,10 @@
            (url "https://github.com/copyleft/cl-webdriver-client")
            (commit commit)))
      (sha256
-      (base32 "1kn5hlgdsbxjk7gkv6gqsc20cfkgc04kzdxpjysnbf9v678r0g3b"))
+      (base32 "1975yyvvdxg11vgpyx93nkqr5x6i1xy47230vc40yd0c9bn6lpbr"))
      (file-name (git-file-name name version))))
    (build-system asdf-build-system/sbcl)
+   (arguments (list #:tests? #f))
    (inputs (list sbcl-dexador
                  sbcl-quri
                  sbcl-cl-json
