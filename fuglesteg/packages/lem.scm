@@ -130,9 +130,34 @@
    (inputs (list sbcl-alexandria))
    (description "") (synopsis "") (home-page "") (license license:expat))))
 
+(define sbcl-cl-frugal-uuid
+  (let ((commit "9e766a7f0487e4d3ba0ee7c4b1b4e046f531f0b3")
+        (revision "0"))
+    (package
+      (name "sbcl-cl-frugal-uuid")
+      (version (git-version "0.0.1" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/ak-coram/cl-frugal-uuid")
+               (commit commit)))
+         (file-name (git-file-name "cl-frugal-uuid" version))
+         (sha256
+          (base32 "1naviw6qksf2zh2wsr9lqpdjfy10nfrc1pc0liz1hrq14f15lsrm"))))
+      (build-system asdf-build-system/sbcl)
+      (arguments
+       '(#:asd-systems (list "frugal-uuid")))
+      (native-inputs (list sbcl-fiveam))
+      (home-page "https://github.com/cxxxr/jsonrpc")
+      (synopsis "JSON-RPC 2.0 server/client for Common Lisp")
+      (description
+       "This package provides a JSON-RPC 2.0 server/client for Common Lisp.")
+      (license license:bsd-2))))
+
 (define-public lem-latest
   (let ((revision "0")
-        (commit "8798c0c86e517365c155a0b60208600815511672"))
+        (commit "e679832c5c08a8274ac7d43f90b30b093445197d"))
     (package
      (inherit lem)
      (name "lem")
@@ -144,7 +169,7 @@
              (url "https://github.com/lem-project/lem")
              (commit commit)))
        (sha256
-        (base32 "0m3q1in2x0c0plsbdja5shy15ww9qsiy4i2fs8mdixy7kx54v5xb"))
+        (base32 "1fvhg6xb8xshgklz8xd24fc884pasc90cpwv7s1153nkpxjr9bs4"))
        (file-name (git-file-name name version))
        (snippet
         #~(begin
@@ -152,14 +177,14 @@
             (delete-file-recursively "roswell")
             ;; Delete precompiled shared object files.
             (delete-file-recursively "extensions/terminal/lib")))))
-     (inputs 
+     (inputs
       (list
        libvterm sbcl-alexandria sbcl-trivia sbcl-cl-webview
        sbcl-trivial-gray-streams sbcl-trivial-types sbcl-cl-ppcre
        sbcl-closer-mop sbcl-iterate sbcl-lem-mailbox
        sbcl-inquisitor sbcl-babel sbcl-bordeaux-threads
        sbcl-yason sbcl-log4cl sbcl-split-sequence
-       sbcl-cl-str sbcl-dexador sbcl-3bmd
+       sbcl-cl-str sbcl-dexador sbcl-3bmd sbcl-cl-frugal-uuid
        sbcl-micros sbcl-lisp-preprocessor sbcl-trivial-ws
        sbcl-trivial-open-browser sbcl-sdl2 sbcl-sdl2-ttf
        sbcl-sdl2-image sbcl-trivial-main-thread sbcl-cffi
@@ -169,5 +194,3 @@
        sbcl-esrap sbcl-parse-number sbcl-cl-package-locks
        sbcl-slime-swank sbcl-trivial-utf-8 sbcl-lem-extension-manager
        sbcl-deploy sbcl-cl-mustache cl-command-line-arguments)))))
-
-  
