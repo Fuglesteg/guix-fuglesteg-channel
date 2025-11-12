@@ -157,7 +157,7 @@
 
 (define-public lem-latest
   (let ((revision "0")
-        (commit "e679832c5c08a8274ac7d43f90b30b093445197d"))
+        (commit "c9098c5d467e659acc67f0abbcd691126c9dc330"))
     (package
      (inherit lem)
      (name "lem")
@@ -169,7 +169,7 @@
              (url "https://github.com/lem-project/lem")
              (commit commit)))
        (sha256
-        (base32 "1fvhg6xb8xshgklz8xd24fc884pasc90cpwv7s1153nkpxjr9bs4"))
+        (base32 "1g2vd66xg311rkkcqrdm0q7w0ixky738biym4l0cjdfb3dligvcv"))
        (file-name (git-file-name name version))
        (snippet
         #~(begin
