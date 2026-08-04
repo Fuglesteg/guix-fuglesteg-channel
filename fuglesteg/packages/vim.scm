@@ -270,7 +270,7 @@ This package includes the @code{libtree-sitter} runtime library.")
                                                      (("\\$\\{CMAKE_C_COMPILER\\}") "/gnu/store/.../bin/gcc"))
                                         #t)))))
    (inputs (list libuv-for-luv
-                 msgpack
+                 msgpack-c
                  libtermkey
                  libvterm
                  unibilium
